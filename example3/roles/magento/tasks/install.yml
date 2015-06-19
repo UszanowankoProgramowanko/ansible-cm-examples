@@ -1,0 +1,29 @@
+---
+# file: roles/magento/tasks/install.yml
+
+- name: Install Magento
+  shell: "php {{ project.dir_web }}/install.php --
+    --license_agreement_accepted \"yes\"
+    --locale \"{{ magento.locale }}\"
+    --session_save \"files\"
+    --admin_frontname \"{{ magento.administrator }}\"
+    --encryption_key \"{{ magento.salt }}\"
+    --timezone \"{{ magento.timezone }}\"
+    --default_currency \"{{ magento.currency }}\"
+    --db_host localhost
+    --db_name {{ mysql.database }}
+    --db_user {{ mysql.user }}
+    --db_pass {{ mysql.password }}
+    --url \"{{ project.server_name }}\"
+    --skip_url_validation
+    --use_rewrites \"yes\"
+    --use_secure \"no\"
+    --secure_base_url \"\"
+    --use_secure_admin \"no\"
+    --admin_firstname {{ magento.first_name }}
+    --admin_lastname {{ magento.last_name }}
+    --admin_email {{ magento.email }}
+    --admin_username {{ magento.user_login }}
+    --admin_password {{ magento.user_password }}"
+  notify: start mysql
+  sudo: yes

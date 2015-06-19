@@ -1,0 +1,15 @@
+---
+# file: playbook.yml
+
+- hosts: all
+  sudo: yes
+  sudo_user: root
+  vars_files:
+    - vars/vars.yml
+
+  roles:
+    - common
+    - mysql
+    - apache
+    - php5
+    - magento

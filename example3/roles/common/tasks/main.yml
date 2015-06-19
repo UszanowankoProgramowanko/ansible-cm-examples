@@ -1,0 +1,77 @@
+---
+# file: roles/common/tasks/main.yml
+
+# Update repositories cache
+- name: Update repositories cache
+  apt:
+    update_cache=yes
+    cache_valid_time=3600
+  sudo: yes
+
+# Configure locale
+- name: Configure locale
+  locale_gen:
+    name={{ general.locale }}
+    state=present
+  sudo: yes
+
+# Configure timezone
+- name: Configure timezone
+  copy:
+    content={{ general.timezone }}
+    dest=/etc/timezone
+    owner=root
+    group=root
+    mode=0644
+    backup=yes
+  notify: update timezone
+  sudo: yes
+
+# Install packages
+- name: Ensure base packages
+  apt:
+    name={{ item }}
+    update_cache={{ general.update_apt_cache }}
+    state=latest
+  with_items:
+    - bash
+  sudo: yes
+
+- name: Install base system packages
+  apt:
+    pkg={{ item }}
+    state=latest
+  with_items:
+    - autoconf
+    - binutils-doc
+    - binutils
+    - bison
+    - build-essential
+    - ntp
+    - curl
+    - wget
+    - acl
+    - libpq-dev
+    - libevent-dev
+    - python-dev
+    - python-pip
+    - python-pycurl
+    - python-setuptools
+    - python-software-properties
+    - git
+    - htop
+  sudo: yes
+
+- name: Set the hostname
+  shell: hostname {{ project.hostname }}
+  when: project.hostname is defined
+
+- name: Update /etc/hosts
+  lineinfile:
+    dest=/etc/hosts
+    regexp='^127\.0\.0\.1'
+    line='127.0.0.1 localhost {{ project.hostname }}'
+    owner=root
+    group=root
+    mode=0644
+  sudo: yes

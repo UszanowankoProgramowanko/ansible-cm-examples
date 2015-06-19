@@ -1,0 +1,38 @@
+---
+# file: vars/vars.yml
+
+project:
+  name: "UP Magento"
+  hostname: "upmagento"
+  server_admin: "bart@tsh.io"
+  server_name: "upmagento.dev"
+  server_alias: "www.upmagento.dev"
+  index: "index.php"
+  dir_web: "/var/www/magento_up"
+
+general:
+  locale: "pl_PL.UTF-8"
+  timezone: "urope/Warsaw"
+  update_apt_cache: "yes"
+
+mysql:
+  root_user: "root"
+  root_password: "szer5tyhbn67uj"
+  user: "uszanowanko"
+  password: "56tghhhbvgh"
+  database: "magento"
+  port: 3306
+  user_home: root
+
+magento:
+  first_name: "Uszanowanko"
+  last_name: "Programowanko"
+  email: "bart@tsh.io"
+  user_login: "up_magento_user"
+  user_password: "123456789upy"
+  salt: "45rfv6ygb"
+  locale: "pl_PL"
+  timezone: "Europe/Warsaw"
+  currency: "PLN"
+  administrator: "admin"
+  install: true

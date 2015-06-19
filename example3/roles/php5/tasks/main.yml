@@ -1,0 +1,27 @@
+---
+# file: roles/php5/tasks/main.yml
+
+- name: Install PHP last version
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - php5-cli
+    - php5
+  sudo: yes
+
+- name: Ensure timezone is set in cli php.ini
+  lineinfile:
+    dest=/etc/php5/cli/php.ini
+    regexp='date.timezone ='
+    line='date.timezone = {{ general.timezone }}'
+  sudo: yes
+
+- name: Install php packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - php5-mysql
+    - php5-pgsql
+    - php5-sqlite
+    - php5-sybase
+    - php5-xdebug
+    - php5-intl
+  sudo: yes

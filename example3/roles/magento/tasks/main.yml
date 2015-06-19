@@ -1,0 +1,70 @@
+---
+# file: roles/magento/tasks/main.yml
+
+- name: Install necessary php5 packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - php5-mcrypt
+    - php5-curl
+    - php5-gd
+  sudo: yes
+
+- name: Enable php5 mcrypt
+  command: "sudo php5enmod mcrypt"
+  notify: restart apache
+  sudo: yes
+
+- name: Check magento exists
+  stat:
+    path="{{ project.dir_web }}"
+  register: dir_web
+
+- name: Register dir web exists
+  set_fact:
+    noexists: "(not (dir_web.stat.exists)) | bool"
+
+- name: Create web dir
+  file:
+    path="{{ project.dir_web }}"
+    state=directory
+    mode=0777
+  when: noexists
+  sudo: yes
+
+- name: Unpack magento pack
+  unarchive:
+    src="{{ magento_package }}"
+    dest="{{ project.dir_web }}"
+  when: noexists
+  sudo: yes
+
+- name: Move all magento files to general dir
+  shell: "mv {{ project.dir_web }}/magento/* {{ project.dir_web }}"
+  when: noexists
+  sudo: yes
+
+- name: Remove magento empty dir
+  file:
+    name="{{ project.dir_web }}/magento"
+    state=absent
+  when: noexists
+  sudo: yes
+
+- name: Correct permission
+  file:
+    path="{{ project.dir_web }}/{{ item }}"
+    state=directory
+    mode="o+w"
+    recurse=yes
+  with_items: all_permission_dirs
+  sudo: yes
+
+- name: Create htaccess file
+  copy:
+    src=htaccess
+    dest="{{ project.dir_web }}/.htaccess"
+  sudo: yes
+
+- name: Include install tasks
+  include: install.yml
+  when: "({{ magento.install }})"

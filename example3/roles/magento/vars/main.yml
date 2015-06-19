@@ -1,0 +1,8 @@
+---
+# file: roles/magento/vars/main.yml
+
+magento_package: magento-1.9.1.0.tar.gz
+
+all_permission_dirs:
+  - app/etc
+  - media

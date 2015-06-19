@@ -1,0 +1,43 @@
+---
+# file: roles/apache/tasks/main.yml
+
+# Install Apache
+- name: Install Apache
+  apt: name=apache2 state=latest
+  sudo: yes
+
+# Instal modules
+- name: Enable Apache Modules
+  apache2_module: state=present name={{ item }}
+  with_items:
+    - rewrite
+    - vhost_alias
+    - headers
+    - expires
+    - filter
+    - ssl
+  notify: restart apache
+  sudo: yes
+
+# Remove default apache virtual host on Debian
+- name: Remove default apache virtual host
+  file:
+    path=/etc/apache2/sites-enabled/000-default.conf
+    state=absent
+  notify: restart apache
+  sudo: yes
+
+# Create web configuration
+- name: Create project virtual host
+  template:
+    src=vhost.conf.j2
+    dest=/etc/apache2/sites-available/{{ project.server_name }}.conf
+  sudo: yes
+
+- name: Enable new project virtual host
+  file:
+    src=/etc/apache2/sites-available/{{ project.server_name }}.conf
+    dest=/etc/apache2/sites-enabled/{{ project.server_name }}.conf
+    state=link
+  notify: restart apache
+  sudo: yes

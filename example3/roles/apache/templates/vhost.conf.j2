@@ -1,0 +1,20 @@
+# Project '{{ project.name }}' virtualhost template
+
+<VirtualHost *:80>
+    ServerAdmin {{ project.server_admin }}
+    DocumentRoot {{ project.dir_web }}
+    DirectoryIndex {{ project.index }}
+
+    ServerName {{ project.server_name }}
+    ServerAlias {{ project.server_alias }}
+
+    <Directory {{ project.dir_web }}>
+        AllowOverride All
+        <IfVersion < 2.4>
+            Allow from all
+        </IfVersion>
+        <IfVersion >= 2.4>
+            Require all granted
+        </IfVersion>
+    </Directory>
+</VirtualHost>

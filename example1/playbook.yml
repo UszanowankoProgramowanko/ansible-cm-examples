@@ -1,0 +1,13 @@
+---
+# file: playbook.yml
+
+- hosts: local
+  tasks:
+   - name: Install Nginx
+     apt: pkg=nginx state=installed update_cache=true
+     notify:
+      - Start Nginx
+
+  handlers:
+   - name: Start Nginx
+     service: name=nginx state=started

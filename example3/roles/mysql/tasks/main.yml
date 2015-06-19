@@ -1,0 +1,24 @@
+---
+# file: roles/mysql/tasks/main.yml
+
+- name: Install MySQL Packages
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - mysql-server
+    - mysql-client
+    - python-mysqldb
+  sudo: yes
+
+- name: Update root password for all root accounts
+  mysql_user: name=root host={{ item }} check_implicit_admin=yes password={{ mysql.root_password }} login_user=root login_password={{ mysql.root_password }}
+  with_items:
+    - "{{ project.hostname }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+
+- name: Create databases
+  mysql_db: name={{ mysql.database }} state=present login_user={{ mysql.root_user }} login_password={{ mysql.root_password }}
+
+- name: Create users
+  mysql_user: name={{ mysql.user }} password={{ mysql.password }} priv={{ mysql.database }}.*:ALL state=present login_user={{ mysql.root_user }} login_password={{ mysql.root_password }}
